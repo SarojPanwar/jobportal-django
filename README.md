@@ -4,6 +4,7 @@ A full-stack job portal web application built with Django, Python, and MySQL. Su
 
 Live demo: 
 https://evarasingh.pythonanywhere.com/
+
 Features
 
 Job Seeker — browse and search jobs, apply with a cover letter, track application status from a personal dashboard
