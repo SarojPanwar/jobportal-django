@@ -1,0 +1,177 @@
+{% extends "core/base.html" %}
+{% block title %}Admin Dashboard – JobConnect{% endblock %}
+
+{% block content %}
+<div class="page-header-dark">
+  <div class="container">
+    <h1 class="page-title text-white"><i class="bi bi-shield-check me-2"></i>Admin Dashboard</h1>
+    <p class="page-sub text-white-50">Platform management &amp; oversight</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Stats -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4 col-lg">
+      <div class="stat-card border-primary">
+        <div class="stat-card-icon bg-primary-light"><i class="bi bi-people text-primary"></i></div>
+        <div class="stat-card-num">{{ stats.users }}</div>
+        <div class="stat-card-label">Total Users</div>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-success-light"><i class="bi bi-person-check text-success"></i></div>
+        <div class="stat-card-num">{{ stats.seekers }}</div>
+        <div class="stat-card-label">Job Seekers</div>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-info-light"><i class="bi bi-building text-info"></i></div>
+        <div class="stat-card-num">{{ stats.employers }}</div>
+        <div class="stat-card-label">Employers</div>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-warning-light"><i class="bi bi-briefcase text-warning"></i></div>
+        <div class="stat-card-num">{{ stats.jobs }}</div>
+        <div class="stat-card-label">Job Listings</div>
+      </div>
+    </div>
+    <div class="col-md-4 col-lg">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-danger-light"><i class="bi bi-send text-danger"></i></div>
+        <div class="stat-card-num">{{ stats.apps }}</div>
+        <div class="stat-card-label">Applications</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs admin-tabs mb-4" id="adminTabs">
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#usersTab">
+        <i class="bi bi-people me-2"></i>Users ({{ stats.users }})
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jobsTab">
+        <i class="bi bi-briefcase me-2"></i>Jobs ({{ stats.jobs }})
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#appsTab">
+        <i class="bi bi-send me-2"></i>Applications ({{ stats.apps }})
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- Users Tab -->
+    <div class="tab-pane fade show active" id="usersTab">
+      <div class="table-card">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr><th>#</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td class="text-muted">{{ u.id }}</td>
+              <td class="fw-semibold">{{ u.username }}</td>
+              <td>{{ u.email }}</td>
+              <td><span class="role-badge role-{{ u.role }}">{{ u.role }}</span></td>
+              <td class="text-muted">{{ u.date_joined|date:"Y-m-d" }}</td>
+              <td>
+                {% if u.role != 'admin' %}
+                <a href="{% url 'core:admin_delete_user' u.id %}" class="btn btn-outline-danger btn-xs"
+                   onclick="return confirm('Delete user {{ u.username }}?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+                {% else %}
+                <span class="text-muted small">Protected</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Jobs Tab -->
+    <div class="tab-pane fade" id="jobsTab">
+      <div class="table-card">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr><th>Title</th><th>Company</th><th>Location</th><th>Employer</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+            <tr>
+              <td class="fw-semibold">{{ job.title }}</td>
+              <td>{{ job.company }}</td>
+              <td>{{ job.location }}</td>
+              <td>{{ job.employer.username }}</td>
+              <td>
+                {% if job.is_active %}
+                  <span class="badge bg-success">Active</span>
+                {% else %}
+                  <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+              </td>
+              <td class="d-flex gap-1">
+                <a href="{% url 'core:job_detail' job.id %}" class="btn btn-outline-primary btn-xs">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'core:admin_toggle_job' job.id %}" class="btn btn-outline-warning btn-xs">
+                  <i class="bi bi-toggle-on"></i>
+                </a>
+                <a href="{% url 'core:delete_job' job.id %}" class="btn btn-outline-danger btn-xs"
+                   onclick="return confirm('Remove this job?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Applications Tab -->
+    <div class="tab-pane fade" id="appsTab">
+      <div class="table-card">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr><th>Job</th><th>Applicant</th><th>Applied On</th><th>Status</th><th>Update</th></tr>
+          </thead>
+          <tbody>
+            {% for app in apps %}
+            <tr>
+              <td class="fw-semibold">{{ app.job.title }}</td>
+              <td>{{ app.seeker.username }}</td>
+              <td class="text-muted">{{ app.applied_at|date:"Y-m-d" }}</td>
+              <td><span class="status-badge status-{{ app.status|lower }}">{{ app.status }}</span></td>
+              <td>
+                <div class="d-flex gap-1">
+                  {% for status in statuses %}
+                  <a href="{% url 'core:update_status' app.id status %}"
+                     class="btn btn-xs {% if app.status == status %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+                     title="{{ status }}">
+                    {{ status|slice:":1" }}
+                  </a>
+                  {% endfor %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
