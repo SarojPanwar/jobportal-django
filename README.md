@@ -16,7 +16,11 @@ Authentication — register and login by email, role-based access control on eve
 Responsive UI — Bootstrap 5, works on mobile and desktop
 
 Tech Stack
-
+Layer       Technology
+Backend     Python 3.12, Django 6.
+Database    MySQL 8
+Frontend    Bootstrap 5
+Auth        Django built-in auth + custom email login
 
 
 Project Structure
