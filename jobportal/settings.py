@@ -1,7 +1,5 @@
 """
 Django settings for the JobConnect project (jobportal).
-
-Converted from the original Flask + SQLite app.
 Database: MySQL (via env vars) — falls back to SQLite only if
 explicitly requested for quick local testing.
 """
@@ -16,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # ─── Core security settings ──────────────────────────────────────────────
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-in-production")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
@@ -78,9 +76,6 @@ WSGI_APPLICATION = "jobportal.wsgi.application"
 # ─── Database ─────────────────────────────────────────────────────────────
 # Set DATABASE_URL, e.g.:
 #   mysql://USER:PASSWORD@HOST:3306/DBNAME
-# in your .env file (or Vercel project env vars).
-# Falls back to individual MYSQL_* vars, and finally to local SQLite
-# only when nothing is configured (handy for a first `runserver` test).
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 DB_SSL_REQUIRE = os.environ.get("DB_SSL_REQUIRE", "True") == "True"
@@ -89,9 +84,7 @@ if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-    # dj_database_url's ssl_require flag adds a "sslmode" option, which is
-    # PostgreSQL-only syntax and breaks PyMySQL/mysqlclient. For MySQL we
-    # need to set OPTIONS the way PyMySQL actually expects instead.
+   
     if DATABASES["default"].get("ENGINE") == "django.db.backends.mysql":
         DATABASES["default"].setdefault("OPTIONS", {})["charset"] = "utf8mb4"
         if DB_SSL_REQUIRE:
@@ -129,8 +122,7 @@ LOGIN_URL = "core:login"
 LOGIN_REDIRECT_URL = "core:dashboard"
 LOGOUT_REDIRECT_URL = "core:index"
 
-# Map Flask's 'danger' category to Django's default 'error' tag so the
-# existing Bootstrap alert classes (alert-danger / alert-success / ...) work.
+
 from django.contrib.messages import constants as message_constants  # noqa: E402
 
 MESSAGE_TAGS = {
