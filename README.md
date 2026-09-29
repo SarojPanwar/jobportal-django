@@ -3,7 +3,7 @@ JobConnect — Django + MySQL
 A full-stack job portal web application built with Django, Python, and MySQL. Supports three user roles — Job Seeker, Employer, and Admin — each with their own dashboard and features.
 
 Live demo: 
-https://evarasingh.pythonanywhere.com/
+https://job-portal-application-294a.onrender.com
 
 Features
 

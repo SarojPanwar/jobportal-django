@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 
 
 def role_required(*roles):
-    """Equivalent of the Flask @role_required(*roles) decorator."""
+   
     def decorator(view_func):
         @wraps(view_func)
         def wrapped(request, *args, **kwargs):

@@ -6,8 +6,8 @@ User = get_user_model()
 
 class EmailBackend(ModelBackend):
     """
-    Authenticate using email + password instead of username + password,
-    to match the original Flask app's login form (email field).
+    Authenticate using email + password instead of username + password.
+    
     """
 
     def authenticate(self, request, username=None, password=None, **kwargs):
